@@ -1,8 +1,11 @@
 import fetch from "node-fetch"
 import fs from 'fs'
 import CONSTS from "./const.js"
-export default function eurobet() {
+
+function eurobet() {
+    //start time
     console.time("myTimer");
+    
     fetch("https://www.eurobet.it/live-homepage-service/sport-schedule/services/live-homepage/live?prematch=0&live=1")
     .then(res => res.json())
     .then(data => {
@@ -27,7 +30,7 @@ export default function eurobet() {
 
                     let betsList = res?.result?.betGroupList
                     if (!Array.isArray(betsList)) {
-                        console.error(`no bets available for the match ${match}.`);
+                        //console.error(`no bets available for the match ${match}.`);
                         return;
                     }
                     let bets = {}
@@ -62,17 +65,19 @@ export default function eurobet() {
                     });
                 })
                 .catch(err => {
-                    console.log(err.message)
+                    //console.log(err.message)
                 })       
             }
         }
     })
-
+    .then(() => {
+        console.timeEnd('myTimer')
+    })
     .catch(err => {
         console.log(err.message)
     })
 }
 
-// export default function continuousAsyncEurobet(interval = 1000) {
-//     setInterval(eurobet, interval);
-// }
+export default function continuousAsyncEurobet(interval = 1000) {
+    setInterval(eurobet, interval);
+}
