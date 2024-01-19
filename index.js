@@ -5,8 +5,12 @@ const server = express()
 
 const port = 3000
 
+//le due costanti qui sotto puoi modificarle a tuo piacimento
+const MILLIS_REQUESTS = 250
+const IS_ONE_FILE_TXT = false //vuoi generare un singolo file .txt o uno per ogni gruppo di partite live? se 'true', il file e' uno solo
+
 function getData() {
-    continuousAsyncEurobet(500)
+    continuousAsyncEurobet(MILLIS_REQUESTS, IS_ONE_FILE_TXT)
 }
 
 server.listen(port, () => {
