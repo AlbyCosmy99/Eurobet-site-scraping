@@ -78,6 +78,7 @@ function eurobet() {
     })
 }
 
+//interval should be >=250ms !!! - otherwise potential bugs are posible
 export default function continuousAsyncEurobet(interval = 1000) {
     setInterval(eurobet, interval);
 }
