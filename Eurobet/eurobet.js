@@ -1,10 +1,10 @@
-import fetch from "node-fetch"
+import fetch, { fileFrom } from "node-fetch"
 import fs from 'fs'
 import CONSTS from "./const.js"
-let count = 0
-export default function eurobet() {
+
+function eurobet(singleFile, groupFileName) {
     //start time
-    console.time("myTimer");
+    //console.time("myTimer");
 
     fetch("https://www.eurobet.it/live-homepage-service/sport-schedule/services/live-homepage/live?prematch=0&live=1")
     .then(res => res.json())
@@ -16,14 +16,12 @@ export default function eurobet() {
         const sports = data.result.itemList.length
         for(let i = 0;i<sports;i++) {
             const matches = data.result.itemList[i].itemList.length
+
             for(let j = 0;j<matches;j++) {
                 const matchDetails = CONSTS.FULL_URL_FIRST + data.result.itemList[i].itemList[j].breadCrumbInfo.fullUrl + CONSTS.FULL_URL_SECOND + '\n'
                 fetch(matchDetails)
                 .then(res => res.json())
                 .then(res => {
-                    if(res.status === 404) {
-                        console.log(count++)
-                    }
                     let sport = data.result.itemList[i].itemList[j].eventInfo.disciplineDescription || ''
                     let nation = data.result.itemList[i].itemList[j].eventInfo.countryDescription || ''
                     let competition = data.result.itemList[i].itemList[j].eventInfo.meetingDescription || ''
@@ -33,9 +31,8 @@ export default function eurobet() {
 
                     let betsList = res?.result?.betGroupList
                     
-                    if (!Array.isArray(betsList)) {
-                        //console.error(`no bets available for the match ${match}.`);
-                        return;
+                    if(!betsList) {
+                        betsList = []
                     }
                     
                     let bets = {}
@@ -53,7 +50,7 @@ export default function eurobet() {
                         }
                     })
 
-                    let content = `----------\n
+                    let matchContent = `----------\n
                     Sport: ${sport}
                     Nation: ${nation}
                     Competition: ${competition}
@@ -61,14 +58,26 @@ export default function eurobet() {
                     Score: ${score}
                     Time live: ${timeLive}
                     Bets available: ${JSON.stringify(bets)}
+                    \n
                     `
-                    fs.appendFile('Eurobet/eurobet.txt', content, (err) => {
+
+                    if(!res.result) {
+                        matchContent = `----------\nPartita non disponibile: ${res.status}\n${matchDetails}\n`
+                    }
+                  
+                    let filename = `Eurobet/files/${groupFileName}_eurobet.txt`
+
+                    if(singleFile) {
+                        filename = `Eurobet/files/eurobet.txt`
+                    }
+
+                    fs.appendFile(filename, matchContent, (err) => {
                         if (err) {
                         console.error('An error occurred while adding in the file:', err);
                         return;
                         }                  
                     });
-                })
+                    })
                 .catch(err => {
                     console.log(err)
                 })       
@@ -76,14 +85,16 @@ export default function eurobet() {
         }
     })
     .then(() => {
-        console.timeEnd('myTimer')
+        //console.timeEnd('myTimer')
     })
     .catch(err => {
         console.log(err.message)
     })
 }
 
-// //interval should be >=250ms !!! - otherwise potential bugs are posible
-// export default function continuousAsyncEurobet(interval = 1000) {
-//     setInterval(eurobet, interval);
-// }
+//interval should be >=250ms !!! - otherwise potential bugs are possible
+export default function continuousAsyncEurobet(interval = 1000, singleFile = true) {
+    setInterval(() => {
+        eurobet(singleFile, Math.random().toString(36).substring(2))
+    }, interval);
+}
