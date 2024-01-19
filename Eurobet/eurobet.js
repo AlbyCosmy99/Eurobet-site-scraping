@@ -52,7 +52,7 @@ export default function eurobet() {
                     Match: ${match}
                     Score: ${score}
                     Time live: ${timeLive}
-                    Bet available: ${JSON.stringify(bets)}
+                    Bets available: ${JSON.stringify(bets)}
                     `
                     fs.appendFile('Eurobet/eurobet.txt', content, (err) => {
                         if (err) {
@@ -63,9 +63,7 @@ export default function eurobet() {
                 })
                 .catch(err => {
                     console.log(err.message)
-                })
-                //const content = `${data.result.itemList[i].itemList[j].eventInfo.eventDescription}    ${data.result.itemList[i].itemList[j].eventInfo.teamHome.score}-${data.result.itemList[i].itemList[j].eventInfo.teamAway.score}\n`
-                // Asynchronous Writing         
+                })       
             }
         }
     })
