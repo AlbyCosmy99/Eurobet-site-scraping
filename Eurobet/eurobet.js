@@ -1,13 +1,15 @@
-import fetch, { fileFrom } from "node-fetch"
+import fetch from "node-fetch"
 import fs from 'fs'
 import CONSTS from "./const.js"
 
 function eurobet(singleFile, groupFileName) {
-    //start time
-    //console.time("myTimer");
-
     fetch("https://www.eurobet.it/live-homepage-service/sport-schedule/services/live-homepage/live?prematch=0&live=1")
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) {
+            throw new Error(`HTTP error! Status: 404.`);
+        }
+        return res.json()
+    })
     .then(data => {
         if(!data?.result) {
             //every now and then data.result is undefined probably due to our frequent requests
@@ -79,13 +81,10 @@ function eurobet(singleFile, groupFileName) {
                     });
                     })
                 .catch(err => {
-                    console.log(err)
+                    console.log(err.message)
                 })       
             }
         }
-    })
-    .then(() => {
-        //console.timeEnd('myTimer')
     })
     .catch(err => {
         console.log(err.message)
