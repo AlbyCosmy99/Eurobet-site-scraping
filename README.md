@@ -1,7 +1,7 @@
 # Eurobet site scraping
 
 A Node.js project that scrapes live betting data from **Eurobet** and saves match details, scores, and odds into `.txt` files.  
-This project was developed for a client.
+This project was developed for a client in 2024.
 
 ---
 
